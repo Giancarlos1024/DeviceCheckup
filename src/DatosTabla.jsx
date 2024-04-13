@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './css/DatosTabla.css';
 
-function DatosTabla() {
+// Recibe onUpdateForm como prop
+function DatosTabla({ onUpdateForm }) {
   const [datos, setDatos] = useState([]);
 
   useEffect(() => {
@@ -22,9 +23,23 @@ function DatosTabla() {
     }
   };
 
-  const handleUpdate = async (codigoTicket) => {
+  const handleUpdate = async (codigoTicket, updatedData) => {
     try {
-      // Lógica para actualizar datos
+      const response = await fetch(`http://localhost:3000/datos/${codigoTicket}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+  
+      if (response.ok) {
+        console.log('Datos actualizados exitosamente');
+        // Volver a cargar los datos después de actualizar
+        fetchData();
+      } else {
+        console.error('Error al actualizar datos:', response.statusText);
+      }
     } catch (error) {
       console.error('Error al actualizar datos:', error);
     }
@@ -47,7 +62,11 @@ function DatosTabla() {
       console.error('Error al eliminar datos:', error);
     }
   };
-  
+
+  const handleUpdateData = (dato) => {
+    // Llama a la función onUpdateForm y pasa los datos para actualizar el formulario en Admin
+    onUpdateForm(dato);
+  };
 
   return (
     <div className='container-tabla'>
@@ -84,6 +103,7 @@ function DatosTabla() {
               <td>{new Date(dato.fechaInicio).toLocaleString()}</td>
               <td>{new Date(dato.fechaEstimadaFinalizacion).toLocaleString()}</td>
               <td>
+                <button onClick={() => handleUpdateData(dato)}>Actualizar</button>
                 <button onClick={() => handleDelete(dato.codigoTicket)}>Eliminar</button>
               </td>
             </tr>

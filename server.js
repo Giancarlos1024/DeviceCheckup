@@ -379,10 +379,52 @@ app.put('/datos/:codigoTicket', async (req, res) => {
   const updatedData = req.body; // Datos actualizados del dispositivo
 
   try {
+    console.log('Datos recibidos del cliente:', updatedData);
     await sql.connect(config);
-    // Aquí debes implementar la lógica para actualizar los datos del dispositivo en la base de datos
-    // utilizando el código del ticket proporcionado
-    // ...
+
+    // Actualizar los datos en la tabla Usuarios
+    await sql.query(`
+      UPDATE Usuarios
+      SET 
+        nombre = '${updatedData.nombreUsuario}',
+        apellido = '${updatedData.apellidoUsuario}',
+        correo = '${updatedData.correoUsuario}',
+        dni = '${updatedData.dniUsuario}'
+      WHERE id = (
+        SELECT usuario_id
+        FROM Reparaciones
+        WHERE codigo_ticket = '${codigoTicket}'
+      );
+    `);
+
+    // Actualizar los datos en la tabla Dispositivos
+    await sql.query(`
+      UPDATE Dispositivos
+      SET 
+        nombre = '${updatedData.nombreDispositivo}',
+        descripcion = '${updatedData.descripcionDispositivo}',
+        precio = ${updatedData.precioDispositivo}
+      WHERE id = (
+        SELECT dispositivo_id
+        FROM Reparaciones
+        WHERE codigo_ticket = '${codigoTicket}'
+      );
+    `);
+
+    // Actualizar los datos en la tabla Reparaciones
+    await sql.query(`
+      UPDATE Reparaciones
+      SET 
+        fecha_inicio = '${updatedData.fechaInicio}',
+        fecha_estimada_finalizacion = '${updatedData.fechaEstimadaFinalizacion}',
+        estado_id = (
+          SELECT id
+          FROM EstadosReparacion
+          WHERE nombre = '${updatedData.nombreEstado}'
+        )
+      WHERE codigo_ticket = '${codigoTicket}';
+    `);
+
     res.status(200).send('Datos actualizados exitosamente');
   } catch (error) {
     console.error('Error al actualizar datos:', error.message);
@@ -392,22 +434,8 @@ app.put('/datos/:codigoTicket', async (req, res) => {
   }
 });
 
-// Endpoint para eliminar datos (reparaciones)
-// app.delete('/datos/:codigoTicket', async (req, res) => {
-//   const { codigoTicket } = req.params;
-//   try {
-//     await sql.connect(config);
-//     const result = await sql.query(`DELETE FROM Reparaciones WHERE codigo_ticket = '${codigoTicket}'`);
-//     res.status(200).send('Datos eliminados exitosamente');
-//   } catch (error) {
-//     console.error('Error al eliminar datos:', error.message);
-//     res.status(500).send('Error interno del servidor');
-//   } finally {
-//     sql.close();
-//   }
-// });
 
-// Endpoint para eliminar datos de todas las tablas relacionadas
+
 // Endpoint para eliminar datos de todas las tablas relacionadas
 app.delete('/eliminarDatos/:codigoTicket', async (req, res) => {
   const { codigoTicket } = req.params;
@@ -486,6 +514,9 @@ app.post('/pdf', async (req, res) => {
             background-color: #f2f2f2;
           }
           h2{
+            text-align: center;
+          }
+          h3{
             text-align: center;
           }
         </style>

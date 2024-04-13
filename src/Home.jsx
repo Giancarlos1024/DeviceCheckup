@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate en lugar de navigate
 import './css/App.css';
 import './css/Home.css';
 import './css/Modal.css';
-import { Link } from 'react-router-dom';
 import logo from './img/logo.png';
 import baterias from './img/baterias.jpg';
 import pantallas from './img/pantallas.jpg';
@@ -10,16 +10,19 @@ import liberacion from './img/liberacion.jpg';
 import forros from './img/forro.jpg';
 import pantallaspromo from './img/pantallaspromo.jpg';
 import revision from './img/revision.jpg';
+
 function Home() {
   const [ticketCode, setTicketCode] = useState('');
   const [deviceDetails, setDeviceDetails] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [repairStatus, setRepairStatus] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  const navigate = useNavigate(); // Utiliza useNavigate() en lugar de navigate
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,12 +38,12 @@ function Home() {
 
   const handleAuthentication = (username, password) => {
     if (username === 'admin' && password === 'Admin2024ABB') {
-      setIsAdmin(true);
-      setIsModalOpen(false); // Cerrar el modal después de iniciar sesión correctamente
+      // Utiliza navigate para redirigir al usuario administrador a la página deseada
+      navigate('/admin');
+      setIsModalOpen(false); // Cierra el modal después de iniciar sesión correctamente
     } else {
-      setIsAdmin(false);
       setLoginError(true);
-      setTimeout(() => setLoginError(false), 3000); // Limpiar el error después de 3 segundos
+      setTimeout(() => setLoginError(false), 3000); // Limpia el error después de 3 segundos
       setUsername('');
       setPassword('');
     }
