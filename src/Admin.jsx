@@ -35,8 +35,9 @@ function Admin() {
       // Formatear las fechas antes de enviar
       const formattedData = {
         ...formData,
-        fechaInicio: formData.fechaInicio.replace('Z', ''),
-        fechaEstimadaFinalizacion: formData.fechaEstimadaFinalizacion.replace('Z', '')
+        // Agregar 'T' entre la fecha y la hora para el formato de fecha-fecha de SQL Server
+        fechaInicio: formData.fechaInicio.replace('T', ' '),
+        fechaEstimadaFinalizacion: formData.fechaEstimadaFinalizacion.replace('T', ' ')
       };
 
       const response = await fetch('http://localhost:3000/crear', {
