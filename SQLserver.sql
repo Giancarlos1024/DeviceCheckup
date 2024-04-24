@@ -24,7 +24,7 @@ CREATE TABLE Dispositivos (
 );
 
 -- Crear la tabla para los usuarios
-CREATE TABLE Usuarios (
+CREATE TABLE Clientes (
     id INT PRIMARY KEY IDENTITY,
     nombre NVARCHAR(255) NOT NULL,
     apellido NVARCHAR(255) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE Reparaciones (
     id INT PRIMARY KEY IDENTITY,
     codigo_ticket NVARCHAR(50) NOT NULL, -- Columna para el código del ticket
     dispositivo_id INT FOREIGN KEY REFERENCES Dispositivos(id),
-    usuario_id INT FOREIGN KEY REFERENCES Usuarios(id),
+    usuario_id INT FOREIGN KEY REFERENCES Clientes(id),
     fecha_inicio DATETIME NOT NULL,
     fecha_estimada_finalizacion DATETIME,
     estado_id INT FOREIGN KEY REFERENCES EstadosReparacion(id)
@@ -56,8 +56,8 @@ VALUES
 ('Tablet', 'Tableta con sistema operativo Android', 399.99),
 ('Laptop', 'Portátil ligero y potente', 999.99);
 
--- Insertar datos en la tabla Usuarios
-INSERT INTO Usuarios (nombre, apellido, correo, dni) -- Modificar la inserción para incluir 'dni' en lugar de 'edad'
+-- Insertar datos en la tabla Clientes
+INSERT INTO Clientes (nombre, apellido, correo, dni) -- Modificar la inserción para incluir 'dni' en lugar de 'edad'
 VALUES
 ('Juan', 'Perez', 'juan@example.com', '12345678'), -- Ejemplo de DNI
 ('María', 'Gomez', 'maria@example.com', '87654321'), -- Ejemplo de DNI
@@ -83,7 +83,7 @@ VALUES
 
 -- Seleccionar datos de las tablas para verificar que se hayan insertado correctamente
 SELECT * FROM Dispositivos;
-SELECT * FROM Usuarios;
+SELECT * FROM Clientes;
 SELECT * FROM EstadosReparacion;
 SELECT * FROM Reparaciones;
 SELECT * FROM Users;
