@@ -5,6 +5,16 @@ DROP DATABASE DeviceCheckupDB;
 -- Usar la base de datos
 USE DeviceCheckupDB;
 
+-- Crear la tabla para los usuarios
+CREATE TABLE Users (
+    id INT PRIMARY KEY IDENTITY,
+    usuario NVARCHAR(255) NOT NULL,
+    contrasena NVARCHAR(255) NOT NULL,
+    tipo NVARCHAR(50) NOT NULL
+);
+
+
+
 -- Crear la tabla para los dispositivos
 CREATE TABLE Dispositivos (
     id INT PRIMARY KEY IDENTITY,
@@ -67,9 +77,14 @@ VALUES
 ('TICKET-002', 2, 2, '2022-03-29 09:00:00', '2022-03-31 10:00:00', 3),
 ('TICKET-003', 3, 3, '2022-03-30 08:00:00', '2022-04-01 11:00:00', 2);
 
+INSERT INTO Users (usuario, contrasena, tipo)
+VALUES
+('giancarlos','giancarlos123','Gerente')
+
 -- Seleccionar datos de las tablas para verificar que se hayan insertado correctamente
 SELECT * FROM Dispositivos;
 SELECT * FROM Usuarios;
 SELECT * FROM EstadosReparacion;
 SELECT * FROM Reparaciones;
+SELECT * FROM Users;
 

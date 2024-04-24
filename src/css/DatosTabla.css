@@ -6,7 +6,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    width: 800px;
+    width: auto;
   }
 .container-tabla > h2{
     padding-bottom: 10px;
@@ -67,3 +67,6 @@
 }
 
 /* Estilos adicionales según sea necesario */
+.buttonDatosTabla{
+  background-color: red;
+}

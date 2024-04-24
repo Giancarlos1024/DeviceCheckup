@@ -38,7 +38,7 @@ app.get('/dispositivos/:ticketCode', async (req, res) => {
       SELECT d.*, r.fecha_inicio, r.fecha_estimada_finalizacion, e.nombre AS estado, u.nombre AS usuario, u.apellido, u.correo, u.dni
       FROM Dispositivos d
       INNER JOIN Reparaciones r ON d.id = r.dispositivo_id
-      INNER JOIN Usuarios u ON r.usuario_id = u.id
+      INNER JOIN Clientes u ON r.usuario_id = u.id
       INNER JOIN EstadosReparacion e ON r.estado_id = e.id
       WHERE r.codigo_ticket = '${ticketCode}'
     `);
@@ -148,7 +148,7 @@ app.get('/reparaciones', async (req, res) => {
 app.get('/usuarios', async (req, res) => {
   try {
     await sql.connect(config);
-    const result = await sql.query('SELECT * FROM Usuarios');
+    const result = await sql.query('SELECT * FROM Clientes');
     res.json(result.recordset);
   } catch (error) {
     console.error('Error al obtener usuarios:', error.message);
@@ -163,7 +163,7 @@ app.get('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await sql.connect(config);
-    const result = await sql.query(`SELECT * FROM Usuarios WHERE id = ${id}`);
+    const result = await sql.query(`SELECT * FROM Clientes WHERE id = ${id}`);
     if (result.recordset.length === 0) {
       res.status(404).send('Usuario no encontrado');
     } else {
@@ -183,7 +183,7 @@ app.post('/usuarios', async (req, res) => {
   try {
     await sql.connect(config);
     const result = await sql.query(`
-      INSERT INTO Usuarios (nombre, apellido, correo, dni)
+      INSERT INTO Clientes (nombre, apellido, correo, dni)
       VALUES ('${nombre}', '${apellido}', '${correo}', ${dni})
     `);
     res.status(201).send('Usuario creado exitosamente');
@@ -202,7 +202,7 @@ app.put('/usuarios/:id', async (req, res) => {
   try {
     await sql.connect(config);
     const result = await sql.query(`
-      UPDATE Usuarios
+      UPDATE Clientes
       SET nombre = '${nombre}', apellido = '${apellido}', correo = '${correo}', dni = ${dni}
       WHERE id = ${id}
     `);
@@ -220,7 +220,7 @@ app.delete('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await sql.connect(config);
-    const result = await sql.query(`DELETE FROM Usuarios WHERE id = ${id}`);
+    const result = await sql.query(`DELETE FROM Clientes WHERE id = ${id}`);
     res.status(200).send('Usuario eliminado exitosamente');
   } catch (error) {
     console.error('Error al eliminar usuario:', error.message);
@@ -262,7 +262,7 @@ app.get('/datos', async (req, res) => {
       INNER JOIN
         Dispositivos d ON r.dispositivo_id = d.id
       INNER JOIN
-        Usuarios u ON r.usuario_id = u.id
+        Clientes u ON r.usuario_id = u.id
       INNER JOIN
         EstadosReparacion e ON r.estado_id = e.id;
     `);
@@ -308,13 +308,23 @@ app.post('/crear', async (req, res) => {
     // Conectar a la base de datos
     await sql.connect(config);
 
+    // Verificar si el DNI ya está registrado
+    const dniCheckResult = await sql.query`
+      SELECT COUNT(*) AS count FROM Clientes WHERE dni = ${dniUsuario};
+    `;
+
+    if (dniCheckResult.recordset[0].count > 0) {
+      // Si el DNI ya existe, enviar un mensaje de error
+      return res.status(400).send('El DNI ya está registrado');
+    }
+
     // Iniciar una transacción
     transaction = new sql.Transaction();
     await transaction.begin();
 
     // Insertar el usuario
     const usuarioResult = await transaction.request().query(`
-      INSERT INTO Usuarios (nombre, apellido, correo, dni)
+      INSERT INTO Clientes (nombre, apellido, correo, dni)
       VALUES ('${nombreUsuario}', '${apellidoUsuario}', '${correoUsuario}', '${dniUsuario}');
       SELECT SCOPE_IDENTITY() AS usuarioId; -- Obtener el ID del usuario recién creado
     `);
@@ -378,9 +388,9 @@ app.put('/datos/:codigoTicket', async (req, res) => {
     console.log('Datos recibidos del cliente:', updatedData);
     await sql.connect(config);
 
-    // Actualizar los datos en la tabla Usuarios
+    // Actualizar los datos en la tabla Clientes
     await sql.query(`
-      UPDATE Usuarios
+      UPDATE Clientes
       SET 
         nombre = '${updatedData.nombreUsuario}',
         apellido = '${updatedData.apellidoUsuario}',
@@ -460,7 +470,7 @@ app.delete('/eliminarDatos/:codigoTicket', async (req, res) => {
     await transaction.request().query(`
       DELETE FROM Reparaciones WHERE codigo_ticket = '${codigoTicket}';
       DELETE FROM Dispositivos WHERE id = ${dispositivoId};
-      DELETE FROM Usuarios WHERE id = ${usuarioId};
+      DELETE FROM Clientes WHERE id = ${usuarioId};
       -- Añade otras operaciones de eliminación según sea necesario
     `);
 

@@ -41,7 +41,7 @@ function Admin() {
         fechaInicio: formData.fechaInicio.replace('T', ' '),
         fechaEstimadaFinalizacion: formData.fechaEstimadaFinalizacion.replace('T', ' ')
       };
-
+  
       const response = await fetch('http://localhost:3000/crear', {
         method: 'POST',
         headers: {
@@ -49,6 +49,7 @@ function Admin() {
         },
         body: JSON.stringify(formattedData)
       });
+  
       if (response.ok) {
         console.log('Datos creados exitosamente');
         // Limpiar el formulario después de la creación exitosa
@@ -65,6 +66,9 @@ function Admin() {
           fechaInicio: '',
           fechaEstimadaFinalizacion: ''
         });
+      } else if (response.status === 400) {
+        // Si el DNI ya está registrado, mostrar un mensaje de error
+        alert('El DNI ya está registrado. Por favor, introduzca otro DNI.');
       } else {
         console.error('Error al crear datos:', response.statusText);
       }

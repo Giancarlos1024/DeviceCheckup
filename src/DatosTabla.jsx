@@ -104,7 +104,7 @@ function DatosTabla({ onUpdateForm }) {
               <td>{new Date(dato.fechaEstimadaFinalizacion).toLocaleString()}</td>
               <td>
                 <button onClick={() => handleUpdateData(dato)}>Actualizar</button>
-                <button onClick={() => handleDelete(dato.codigoTicket)}>Eliminar</button>
+                <button className='buttonDatosTabla' onClick={() => handleDelete(dato.codigoTicket)}>Eliminar</button>
               </td>
             </tr>
           ))}
