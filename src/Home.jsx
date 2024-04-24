@@ -35,13 +35,29 @@ function Home() {
       console.error('Error al obtener detalles del dispositivo:', error);
     }
   };
-
-  const handleAuthentication = (username, password) => {
-    if (username === 'admin' && password === 'Admin2024ABB') {
-      // Utiliza navigate para redirigir al usuario administrador a la página deseada
-      navigate('/admin');
+  const verifyCredentials = async (username, password) => {
+    try {
+      const response = await fetch(`http://localhost:3000/users`);
+      const data = await response.json();
+      console.log(data); // Esto imprimirá todos los usuarios en la consola
+      return data.find(user => user.usuario === username && user.contrasena === password) !== undefined; // Devuelve verdadero si se encuentra un usuario con las credenciales proporcionadas
+    } catch (error) {
+      console.error('Error al verificar credenciales:', error);
+      return false;
+    }
+  };
+  
+  
+  const handleAuthentication = async (username, password) => {
+    const isAuthenticated = await verifyCredentials(username, password);
+    
+    if (isAuthenticated) {
+      console.log(username);
+      console.log(password);
+      navigate('/admin'); // Redirige a la página de administrador o a donde desees
       setIsModalOpen(false); // Cierra el modal después de iniciar sesión correctamente
     } else {
+      // Si el usuario no existe o las credenciales son incorrectas
       setLoginError(true);
       setTimeout(() => setLoginError(false), 3000); // Limpia el error después de 3 segundos
       setUsername('');

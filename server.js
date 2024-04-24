@@ -144,7 +144,7 @@ app.get('/reparaciones', async (req, res) => {
   }
 });
 
-// Endpoint para obtener todos los usuarios
+// Endpoint para obtener todos los cliente
 app.get('/usuarios', async (req, res) => {
   try {
     await sql.connect(config);
@@ -158,7 +158,7 @@ app.get('/usuarios', async (req, res) => {
   }
 });
 
-// Endpoint para obtener un usuario por su ID
+// Endpoint para obtener un cliente por su ID
 app.get('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -177,7 +177,7 @@ app.get('/usuarios/:id', async (req, res) => {
   }
 });
 
-// Endpoint para crear un nuevo usuario
+// Endpoint para crear un nuevo cliente
 app.post('/usuarios', async (req, res) => {
   const { nombre, apellido, correo, dni } = req.body;
   try {
@@ -195,7 +195,7 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
-// Endpoint para actualizar un usuario existente
+// Endpoint para actualizar un cliente existente
 app.put('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, apellido, correo, dni } = req.body;
@@ -215,8 +215,7 @@ app.put('/usuarios/:id', async (req, res) => {
   }
 });
 
-// Endpoint para eliminar un usuario
-// Endpoint para eliminar un usuario
+// Endpoint para eliminar un cliente
 app.delete('/usuarios/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -282,9 +281,6 @@ app.get('/datos', async (req, res) => {
     }
 
     res.status(500).send('Error interno del servidor');
-  } finally {
-    // Cerrar la conexión a la base de datos
-    sql.close();
   }
 });
 
@@ -596,9 +592,82 @@ app.post('/pdf', async (req, res) => {
   }
 });
 
+app.get('/users', async (req, res) => {
+  try {
+    // Conectar a la base de datos
+    await sql.connect(config);
+    
+    // Realizar la consulta para obtener todos los usuarios
+    const result = await sql.query('SELECT * FROM Users');
 
+    // Enviar los datos de los usuarios al cliente
+    res.json(result.recordset);
+  } catch (error) {
+    // Manejar errores si ocurrieron durante la obtención de los usuarios
+    console.error('Error al obtener usuarios:', error.message);
+    res.status(500).send('Error interno del servidor');
+  } 
+});
 
+app.post('/users', async (req, res) => {
+  try {
+    // Obtén los datos del cuerpo de la solicitud
+    const { usuario, contrasena, userType } = req.body;
 
+    // Crea una nueva conexión a la base de datos
+    await sql.connect(config);
+
+    // Ejecuta la consulta SQL para insertar el nuevo usuario
+    await sql.query`
+      INSERT INTO Users (usuario, contrasena, tipo)
+      VALUES (${usuario}, ${contrasena}, ${userType});`;
+
+    // Cierra la conexión a la base de datos
+    await sql.close();
+
+    // Envía una respuesta al cliente indicando que el usuario se creó correctamente
+    res.status(201).json({ message: 'Usuario creado exitosamente' });
+  } catch (error) {
+    // Maneja cualquier error que ocurra durante el proceso
+    console.error('Error al crear el usuario:', error.message);
+    res.status(500).json({ error: 'Error al crear el usuario' });
+  }
+});
+
+// Endpoint para actualizar un usuario existente
+app.put('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { usuario, contrasena, tipo } = req.body;
+  try {
+    await sql.connect(config);
+    const result = await sql.query(`
+      UPDATE Users
+      SET usuario = '${usuario}', contrasena = '${contrasena}', tipo = '${tipo}'
+      WHERE id = ${id}
+    `);
+    res.status(200).send('Usuario actualizado exitosamente');
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error.message);
+    res.status(500).send('Error interno del servidor');
+  } finally {
+    sql.close();
+  }
+});
+
+// Endpoint para eliminar un usuario
+app.delete('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await sql.connect(config);
+    const result = await sql.query(`DELETE FROM Users WHERE id = ${id}`);
+    res.status(200).send('Usuario eliminado exitosamente');
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error.message);
+    res.status(500).send('Error interno del servidor');
+  } finally {
+    sql.close();
+  }
+});
 
 // Iniciar el servidor
 app.listen(PORT, () => {

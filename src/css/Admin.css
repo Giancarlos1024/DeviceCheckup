@@ -1,7 +1,7 @@
 /* Admin.css */
 
 .admin-container {
-    max-width: 600px;
+    max-width: auto;
     margin: 0 auto;
     padding: 20px;
   }
@@ -13,6 +13,7 @@
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
+    width: 400px;
   }
   
   .admin-form-group {
@@ -48,5 +49,17 @@
   
   .admin-button:hover {
     background-color: #0056b3;
+  }
+
+  .FormulariosPanel{
+    display: flex;
+    justify-content: start;
+    /* background-color: yellow; */
+    
+  }
+  .formularios{
+    /* background-color: aqua; */
+    width: auto;
+    margin: 0px 10px;
   }
   

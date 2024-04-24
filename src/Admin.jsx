@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './css/Admin.css';
 import { Link } from 'react-router-dom';
 import DatosTabla from './DatosTabla';
+import CreateUser from './CreateUser';
+import DatosTablaUser from './DatosTablaUser';
 
 function Admin() {
   const [formData, setFormData] = useState({
@@ -109,41 +111,50 @@ function Admin() {
       <div className="admin-container">
         <h1>Panel de Administrador</h1>
         <Link to="/">Home</Link>
-        <form onSubmit={handleSubmit} className="admin-form">
-          <div className="admin-form-group">
-            <h2>Crear Usuario</h2>
-            <input type="text" name="nombreUsuario" placeholder="Nombre" value={formData.nombreUsuario} onChange={handleChange} />
-            <input type="text" name="apellidoUsuario" placeholder="Apellido" value={formData.apellidoUsuario} onChange={handleChange} />
-            <input type="email" name="correoUsuario" placeholder="Correo" value={formData.correoUsuario} onChange={handleChange} />
-            <input type="text" name="dniUsuario" placeholder="DNI" value={formData.dniUsuario} onChange={handleChange} />
-          </div>
+        <section className='FormulariosPanel'>
+          <div className='formularios'>
+            <form onSubmit={handleSubmit} className="admin-form">
+              <div className="admin-form-group">
+                <h2>Crear Cliente</h2>
+                <input type="text" name="dniUsuario" placeholder="DNI" value={formData.dniUsuario} onChange={handleChange} />
+                <input type="text" name="nombreUsuario" placeholder="Nombre" value={formData.nombreUsuario} onChange={handleChange} />
+                <input type="text" name="apellidoUsuario" placeholder="Apellido" value={formData.apellidoUsuario} onChange={handleChange} />
+                <input type="email" name="correoUsuario" placeholder="Correo" value={formData.correoUsuario} onChange={handleChange} />
+                
+              </div>
 
-          <div className="admin-form-group">
-            <h2>Crear Dispositivo</h2>
-            <input type="text" name="nombreDispositivo" placeholder="Nombre" value={formData.nombreDispositivo} onChange={handleChange} />
-            <input type="text" name="descripcionDispositivo" placeholder="Descripción" value={formData.descripcionDispositivo} onChange={handleChange} />
-            <input type="text" name="precioDispositivo" placeholder="Costo de Reparacion" value={formData.precioDispositivo} onChange={handleChange} />
-          </div>
+              <div className="admin-form-group">
+                <h2>Crear Dispositivo</h2>
+                <input type="text" name="nombreDispositivo" placeholder="Nombre" value={formData.nombreDispositivo} onChange={handleChange} />
+                <input type="text" name="descripcionDispositivo" placeholder="Descripción" value={formData.descripcionDispositivo} onChange={handleChange} />
+                <input type="text" name="precioDispositivo" placeholder="Costo de Reparacion" value={formData.precioDispositivo} onChange={handleChange} />
+              </div>
 
-          <div className="admin-form-group">
-            <h2>Crear Estado de Reparación</h2>
-            <select name="nombreEstado" value={formData.nombreEstado} onChange={handleChange}>
-              <option value="En progreso">En Progreso</option>
-              <option value="Completada">Completada</option>
-              <option value="Pendiente">Pendiente</option>
-            </select>
-          </div>
+              <div className="admin-form-group">
+                <h2>Crear Estado de Reparación</h2>
+                <select name="nombreEstado" value={formData.nombreEstado} onChange={handleChange}>
+                  <option value="En progreso">En Progreso</option>
+                  <option value="Completada">Completada</option>
+                  <option value="Pendiente">Pendiente</option>
+                </select>
+              </div>
 
-          <div className="admin-form-group">
-            <h2>Crear Reparación</h2>
-            <input type="text" name="codigoTicket" placeholder="Código del Ticket" value={formData.codigoTicket} onChange={handleChange} />
-            <input type="datetime-local" name="fechaInicio" placeholder="Fecha de Inicio" value={formData.fechaInicio.replace('Z', '')} onChange={handleChange} />
-            <input type="datetime-local" name="fechaEstimadaFinalizacion" placeholder="Fecha Estimada de Finalización" value={formData.fechaEstimadaFinalizacion.replace('Z', '')} onChange={handleChange} />
+              <div className="admin-form-group">
+                <h2>Crear Reparación</h2>
+                <input type="text" name="codigoTicket" placeholder="Código del Ticket" value={formData.codigoTicket} onChange={handleChange} />
+                <input type="datetime-local" name="fechaInicio" placeholder="Fecha de Inicio" value={formData.fechaInicio.replace('Z', '')} onChange={handleChange} />
+                <input type="datetime-local" name="fechaEstimadaFinalizacion" placeholder="Fecha Estimada de Finalización" value={formData.fechaEstimadaFinalizacion.replace('Z', '')} onChange={handleChange} />
+              </div>
+              
+              <button type="submit" className="admin-button">Crear Datos</button>
+              <button type="button" className="admin-button" onClick={handleConfirmUpdate}>Confirmar Actualización</button>
+            </form>
           </div>
-          
-          <button type="submit" className="admin-button">Crear Datos</button>
-          <button type="button" className="admin-button" onClick={handleConfirmUpdate}>Confirmar Actualización</button>
-        </form>
+          <div className='formularios'>
+            <CreateUser />
+            <DatosTablaUser />
+          </div>
+        </section>
       </div>
       <DatosTabla onUpdateForm={handleUpdateForm} />
     </div>
