@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/Admin.css';
-import { Link } from 'react-router-dom';
+import { Link,useLocation  } from 'react-router-dom';
 import DatosTabla from './DatosTabla';
 import CreateUser from './CreateUser';
 import DatosTablaUser from './DatosTablaUser';
@@ -20,6 +20,17 @@ function Admin() {
     fechaInicio: '',
     fechaEstimadaFinalizacion: ''
   });
+  const location = useLocation();
+  const { state: { username, password, tipo } = {} } = location;
+
+  useEffect(() => {
+    if (username && password && tipo) {
+      // Realizar alguna acción con el nombre de usuario, contraseña y rol recibidos
+      console.log('Username:', username);
+      console.log('Password:', password);
+      console.log('Role:', tipo);
+    }
+  }, [username, password, tipo]);
 
   const handleUpdateForm = (updatedData) => {
     // Actualiza el formulario con los datos recibidos
@@ -120,23 +131,76 @@ function Admin() {
             <form onSubmit={handleSubmit} className="admin-form">
               <div className="admin-form-group">
                 <h2>Crear Cliente</h2>
-                <input type="text" name="dniUsuario" placeholder="DNI" value={formData.dniUsuario} onChange={handleChange} />
-                <input type="text" name="nombreUsuario" placeholder="Nombre" value={formData.nombreUsuario} onChange={handleChange} />
-                <input type="text" name="apellidoUsuario" placeholder="Apellido" value={formData.apellidoUsuario} onChange={handleChange} />
-                <input type="email" name="correoUsuario" placeholder="Correo" value={formData.correoUsuario} onChange={handleChange} />
-                
+                <input
+                  type="text"
+                  name="dniUsuario"
+                  placeholder="DNI"
+                  value={formData.dniUsuario}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="text"
+                  name="nombreUsuario"
+                  placeholder="Nombre"
+                  value={formData.nombreUsuario}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="text"
+                  name="apellidoUsuario"
+                  placeholder="Apellido"
+                  value={formData.apellidoUsuario}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="email"
+                  name="correoUsuario"
+                  placeholder="Correo"
+                  value={formData.correoUsuario}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
               </div>
 
               <div className="admin-form-group">
                 <h2>Crear Dispositivo</h2>
-                <input type="text" name="nombreDispositivo" placeholder="Nombre" value={formData.nombreDispositivo} onChange={handleChange} />
-                <input type="text" name="descripcionDispositivo" placeholder="Descripción" value={formData.descripcionDispositivo} onChange={handleChange} />
-                <input type="text" name="precioDispositivo" placeholder="Costo de Reparacion" value={formData.precioDispositivo} onChange={handleChange} />
+                <input
+                  type="text"
+                  name="nombreDispositivo"
+                  placeholder="Nombre"
+                  value={formData.nombreDispositivo}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="text"
+                  name="descripcionDispositivo"
+                  placeholder="Descripción"
+                  value={formData.descripcionDispositivo}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="text"
+                  name="precioDispositivo"
+                  placeholder="Costo de Reparacion"
+                  value={formData.precioDispositivo}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
               </div>
 
               <div className="admin-form-group">
                 <h2>Crear Estado de Reparación</h2>
-                <select name="nombreEstado" value={formData.nombreEstado} onChange={handleChange}>
+                <select
+                  name="nombreEstado"
+                  value={formData.nombreEstado}
+                  onChange={handleChange}
+                  
+                >
                   <option value="En progreso">En Progreso</option>
                   <option value="Completada">Completada</option>
                   <option value="Pendiente">Pendiente</option>
@@ -145,9 +209,30 @@ function Admin() {
 
               <div className="admin-form-group">
                 <h2>Crear Reparación</h2>
-                <input type="text" name="codigoTicket" placeholder="Código del Ticket" value={formData.codigoTicket} onChange={handleChange} />
-                <input type="datetime-local" name="fechaInicio" placeholder="Fecha de Inicio" value={formData.fechaInicio.replace('Z', '')} onChange={handleChange} />
-                <input type="datetime-local" name="fechaEstimadaFinalizacion" placeholder="Fecha Estimada de Finalización" value={formData.fechaEstimadaFinalizacion.replace('Z', '')} onChange={handleChange} />
+                <input
+                  type="text"
+                  name="codigoTicket"
+                  placeholder="Código del Ticket"
+                  value={formData.codigoTicket}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="datetime-local"
+                  name="fechaInicio"
+                  placeholder="Fecha de Inicio"
+                  value={formData.fechaInicio.replace('Z', '')}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
+                <input
+                  type="datetime-local"
+                  name="fechaEstimadaFinalizacion"
+                  placeholder="Fecha Estimada de Finalización"
+                  value={formData.fechaEstimadaFinalizacion.replace('Z', '')}
+                  onChange={handleChange}
+                  disabled={tipo === 'Tecnico'}
+                />
               </div>
               
               <button type="submit" className="admin-button">Crear Datos</button>
@@ -155,8 +240,12 @@ function Admin() {
             </form>
           </div>
           <div className='formularios'>
-            <CreateUser />
-            <DatosTablaUser />
+            {tipo === 'Admin' && (
+              <>
+                <CreateUser />
+                <DatosTablaUser />
+              </>
+            )}
           </div>
         </section>
       </div>

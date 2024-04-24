@@ -39,22 +39,31 @@ function Home() {
     try {
       const response = await fetch(`http://localhost:3000/users`);
       const data = await response.json();
-      console.log(data); // Esto imprimirá todos los usuarios en la consola
-      return data.find(user => user.usuario === username && user.contrasena === password) !== undefined; // Devuelve verdadero si se encuentra un usuario con las credenciales proporcionadas
+      const user = data.find(user => user.usuario === username && user.contrasena === password);
+      if (user) {
+        return { isAuthenticated: true, tipo: user.tipo };
+      } else {
+        return { isAuthenticated: false };
+      }
     } catch (error) {
       console.error('Error al verificar credenciales:', error);
-      return false;
+      return { isAuthenticated: false };
     }
   };
   
   
   const handleAuthentication = async (username, password) => {
-    const isAuthenticated = await verifyCredentials(username, password);
+    const { isAuthenticated, tipo } = await verifyCredentials(username, password);
     
     if (isAuthenticated) {
       console.log(username);
       console.log(password);
-      navigate('/admin'); // Redirige a la página de administrador o a donde desees
+      const userData = {
+        username,
+        password,
+        tipo
+      };
+      navigate('/admin', { state: userData }); // Pasa los datos como parte del estado de la ruta
       setIsModalOpen(false); // Cierra el modal después de iniciar sesión correctamente
     } else {
       // Si el usuario no existe o las credenciales son incorrectas
@@ -64,6 +73,7 @@ function Home() {
       setPassword('');
     }
   };
+  
 
   const handleDownloadPDF = async () => {
     if (deviceDetails) { // Verifica que deviceDetails no sea null
