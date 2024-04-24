@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './css/DatosTabla.css';
 
-// Recibe onUpdateForm como prop
-function DatosTabla({ onUpdateForm }) {
+function DatosTabla({ onUpdateForm, tipo }) {
   const [datos, setDatos] = useState([]);
 
   useEffect(() => {
@@ -104,7 +103,9 @@ function DatosTabla({ onUpdateForm }) {
               <td>{new Date(dato.fechaEstimadaFinalizacion).toLocaleString()}</td>
               <td>
                 <button onClick={() => handleUpdateData(dato)}>Actualizar</button>
-                <button className='buttonDatosTabla' onClick={() => handleDelete(dato.codigoTicket)}>Eliminar</button>
+                {tipo !== 'Tecnico' && (
+                  <button className='buttonDatosTabla' onClick={() => handleDelete(dato.codigoTicket)}>Eliminar</button>
+                )}
               </td>
             </tr>
           ))}

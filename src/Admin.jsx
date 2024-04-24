@@ -249,7 +249,7 @@ function Admin() {
           </div>
         </section>
       </div>
-      <DatosTabla onUpdateForm={handleUpdateForm} />
+      <DatosTabla onUpdateForm={handleUpdateForm} tipo={tipo} />
     </div>
   );
 }
