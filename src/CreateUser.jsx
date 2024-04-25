@@ -19,6 +19,11 @@ const CreateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (formData.contrasena.length < 8) {
+      alert('La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:3000/users', {
         method: 'POST',
